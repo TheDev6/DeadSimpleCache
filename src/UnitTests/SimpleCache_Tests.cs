@@ -21,7 +21,7 @@
             var result = sut.Get<SampleCacheObject>(key);
             result.Should().NotBeNull();
             result.ValueOrDefault.Should().NotBeNull();
-            result.IsNull.Should().Be(false);
+            result.IsCacheNull.Should().Be(false);
             result.ValueOrDefault.Number.Should().Be(num);
             result.ValueOrDefault.Name.Should().Be(name);
         }
@@ -36,7 +36,7 @@
             var result = sut.Get<string>(key);
             result.Should().NotBeNull();
             result.ValueOrDefault.Should().NotBeNull();
-            result.IsNull.Should().Be(false);
+            result.IsCacheNull.Should().Be(false);
             result.ValueOrDefault.Should().Be(val);
         }
 
@@ -50,8 +50,19 @@
             sut.Set(key, val);
             var result = sut.Get<bool>(key);
             result.Should().NotBeNull();
-            result.IsNull.Should().Be(false);
+            result.IsCacheNull.Should().Be(false);
             result.ValueOrDefault.Should().Be(val);
+        }
+
+        [Fact]
+        public void Get_Default_Bool_EmptyCache()
+        {
+            var sut = new SimpleCache();
+            var key = "key";
+            var result = sut.Get<bool>(key);
+            //this is the most important test! default value types will cause bugs if you don't check if it actually came from cache :)
+            result.IsCacheNull.Should().BeTrue();
+            result.ValueOrDefault.Should().BeFalse();
         }
 
         [Theory]
@@ -65,7 +76,7 @@
             sut.Set(key, val);
             var result = sut.Get<bool?>(key);
             result.Should().NotBeNull();
-            result.IsNull.Should().Be(val == null);
+            result.IsCacheNull.Should().Be(val == null);
             result.ValueOrDefault.Should().Be(val);
         }
 
@@ -80,7 +91,7 @@
             var result = await sut.GetCacheThenSourceAsync<string>(
                 key: key,
                 sourceDelegate: () => Task.FromResult(val));
-            result.IsNull.Should().Be(val == null);
+            result.IsCacheNull.Should().Be(val == null);
             result.ValueOrDefault.Should().Be(val);
         }
 
@@ -95,13 +106,13 @@
             var result = await sut.GetCacheThenSourceAsync<SampleCacheObject>(
                 key: key,
                 sourceDelegate: () => Task.FromResult(obj));
-            result.IsNull.Should().Be(false);
+            result.IsCacheNull.Should().Be(false);
             result.ValueOrDefault.Should().NotBeNull();
             result.ValueOrDefault.Number.Should().Be(num);
             result.ValueOrDefault.Name.Should().Be(name);
 
             var cachePersisted = sut.Get<SampleCacheObject>(key);
-            cachePersisted.IsNull.Should().BeFalse();
+            cachePersisted.IsCacheNull.Should().BeFalse();
             cachePersisted.ValueOrDefault.Number.Should().Be(num);
             cachePersisted.ValueOrDefault.Name.Should().Be(name);
         }
@@ -124,7 +135,7 @@
             var result = await sut.GetCacheThenSourceAsync<SampleCacheObject>(
                 key: key,
                 sourceDelegate: source);
-            result.IsNull.Should().Be(false);
+            result.IsCacheNull.Should().Be(false);
             result.ValueOrDefault.Should().NotBeNull();
             result.ValueOrDefault.Number.Should().Be(num);
             result.ValueOrDefault.Name.Should().Be(name);
