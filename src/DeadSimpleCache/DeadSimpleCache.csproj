@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.8.0</Version>
+    <Description>Just a simple cache class backed by a Dictionary&lt;string,object&gt;</Description>
+    <PackageProjectUrl>https://github.com/TheDev6/DeadSimpleCache</PackageProjectUrl>
+  </PropertyGroup>
+
+</Project>
