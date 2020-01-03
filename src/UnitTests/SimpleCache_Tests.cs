@@ -50,7 +50,7 @@
             sut.Set(key, val);
             var result = sut.Get<bool>(key);
             result.Should().NotBeNull();
-            result.IsNull.Should().Be(val == null);
+            result.IsNull.Should().Be(false);
             result.ValueOrDefault.Should().Be(val);
         }
 
@@ -99,6 +99,11 @@
             result.ValueOrDefault.Should().NotBeNull();
             result.ValueOrDefault.Number.Should().Be(num);
             result.ValueOrDefault.Name.Should().Be(name);
+
+            var cachePersisted = sut.Get<SampleCacheObject>(key);
+            cachePersisted.IsNull.Should().BeFalse();
+            cachePersisted.ValueOrDefault.Number.Should().Be(num);
+            cachePersisted.ValueOrDefault.Name.Should().Be(name);
         }
 
         [Fact]
